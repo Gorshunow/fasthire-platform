@@ -1,126 +1,446 @@
-# Architecture
+# FastHire Architecture
+
+## Project Goal
+
+FastHire — платформа поиска работы для IT-специалистов в формате Tinder.
+
+Кандидаты свайпают вакансии.
+Работодатели свайпают кандидатов.
+
+При взаимном интересе создаётся Match и открывается чат.
+
+---
+
+# Technology Stack
+
+## Frontend
+
+* Next.js 15
+* TypeScript
+* Tailwind CSS
+* Shadcn UI
+* React Hook Form
+* Zod
+
+Причины выбора:
+
+* быстро
+* бесплатно
+* SEO
+* легко развивать
+* отлично подходит для AI-кодинга
+
+---
+
+## Backend
+
+* Supabase
+
+Используется для:
+
+* PostgreSQL
+* Auth
+* Storage
+* Realtime
+* Edge Functions
+
+Причины:
+
+* максимально дешево
+* минимум DevOps
+* быстро разрабатывать одному
+
+---
+
+## Database
+
+* PostgreSQL
+
+Особенности:
+
+* Row Level Security (RLS)
+* Full Text Search
+* Индексы для масштабирования
+
+---
+
+## Authentication
+
+* Supabase Auth
+
+Методы входа:
+
+* Email + Password
+* Telegram Login (этап 2)
+
+Дополнительно:
+
+* Email Verification
+* Password Reset
+* Session Management
+
+---
+
+## Storage
+
+* Supabase Storage
+
+Хранение:
+
+* фото профиля
+* логотипы компаний
+* резюме PDF
+* видео визитки
+
+---
+
+## Realtime
+
+* Supabase Realtime
+
+Используется для:
+
+* чатов
+* уведомлений
+* матчей
+
+---
+
+## AI Layer
+
+* OpenAI API
+
+Функции:
+
+* анализ резюме
+* рекомендации вакансий
+* рекомендации кандидатов
+* генерация описаний вакансий
+* AI-помощник HR
+
+---
+
+## Hosting
 
 Frontend:
-- Next.js
+
+* Vercel
 
 Backend:
-- Supabase
 
-Database:
-- PostgreSQL
+* Supabase Cloud
 
-Auth:
-- Supabase Auth
+---
 
-Storage:
-- Supabase Storage
+## Monitoring
 
-Realtime:
-- Supabase Realtime
+### Sentry
 
-AI:
-- OpenAI API
+Отслеживание:
 
-Hosting:
-- Vercel
+* ошибок frontend
+* ошибок backend
+* производительности
 
-Monitoring:
-- Sentry
+### PostHog
 
-Analytics:
-- PostHog
-## Core Entities
+Отслеживание:
 
-### User
-Общий пользователь системы
+* регистраций
+* конверсий
+* поведения пользователей
+* воронки продаж
+
+---
+
+# Security Architecture
+
+## Обязательные меры
+
+### Row Level Security
+
+Все таблицы работают через RLS.
+
+Пользователь может видеть только свои данные.
+
+---
+
+### Rate Limiting
+
+Защита от:
+
+* спама
+* ботов
+* DDoS
+
+Ограничения:
+
+* логин
+* регистрация
+* чат
+* лайки
+* загрузка файлов
+
+---
+
+### Input Validation
+
+Используем:
+
+* Zod
+* Server Validation
+
+Проверяется каждый запрос.
+
+---
+
+### File Protection
+
+Разрешенные форматы:
+
+* jpg
+* jpeg
+* png
+* pdf
+* mp4
+
+Проверяются:
+
+* размер
+* MIME тип
+* расширение
+
+---
+
+### Secrets
+
+Никогда не храним:
+
+* API ключи в коде
+* пароли в репозитории
+
+Используем:
+
+* Environment Variables
+
+---
+
+# Russian Compliance
+
+## Персональные данные
+
+Учитываем требования:
+
+* 152-ФЗ
+* Политика конфиденциальности
+* Пользовательское соглашение
+
+---
+
+## Согласия
+
+Пользователь подтверждает:
+
+* согласие на обработку данных
+* согласие на хранение резюме
+
+---
+
+## Удаление данных
+
+Пользователь может:
+
+* удалить аккаунт
+* удалить резюме
+* удалить профиль
+
+---
+
+# User Roles
+
+## Candidate
+
+Может:
+
+* создавать профиль
+* загружать резюме
+* свайпать вакансии
+* общаться в чате
+
+---
+
+## Employer
+
+Может:
+
+* создавать компанию
+* публиковать вакансии
+* свайпать кандидатов
+* общаться в чате
+
+---
+
+## Moderator
+
+Может:
+
+* обрабатывать жалобы
+* скрывать вакансии
+* блокировать пользователей
+
+---
+
+## Admin
+
+Полный доступ к системе.
+
+---
+
+# Core Entities
+
+## User
+
+Общий пользователь системы.
 
 Типы:
-- candidate
-- employer
-- admin
 
-### CandidateProfile
+* candidate
+* employer
+* moderator
+* admin
 
-Поля:
-- имя
-- фото
-- стек технологий
-- опыт
-- зарплатные ожидания
-- локация
-- резюме
-- видео визитка
+---
 
-### EmployerProfile
+## CandidateProfile
 
 Поля:
-- название компании
-- описание
-- логотип
-- сайт
 
-### Vacancy
+* first_name
+* last_name
+* avatar_url
+* city
+* country
+* skills
+* experience_years
+* expected_salary
+* resume_url
+* video_url
+* about
+
+---
+
+## EmployerProfile
 
 Поля:
-- название
-- описание
-- зарплата
-- стек
-- формат работы
-- статус
 
-### Swipe
+* company_name
+* logo_url
+* website
+* description
+* company_size
 
-Лайк или пропуск
+---
 
-Тип:
-- like
-- pass
+## Vacancy
 
-### Match
+Поля:
 
-Взаимный лайк
+* title
+* description
+* salary_from
+* salary_to
+* technologies
+* work_format
+* location
+* status
 
-### Chat
+---
 
-Чат после матча
+## Swipe
 
-### Message
+Поля:
 
-Сообщение в чате
+* user_id
+* target_id
+* action
 
-### Report
+action:
 
-Жалоба
-## User Roles
+* like
+* pass
 
-### Candidate
+---
 
-Может:
-- создавать профиль
-- лайкать вакансии
-- получать матчи
-- общаться в чате
+## Match
 
-### Employer
+Поля:
 
-Может:
-- создавать компанию
-- публиковать вакансии
-- лайкать кандидатов
-- общаться в чате
+* candidate_id
+* employer_id
+* vacancy_id
+* created_at
 
-### Moderator
+---
 
-Может:
-- блокировать пользователей
-- скрывать вакансии
-- обрабатывать жалобы
+## Chat
 
-### Admin
+Поля:
 
-Полный доступ
+* match_id
 
-### Subscription
+---
 
-Подписка работодателя
+## Message
+
+Поля:
+
+* chat_id
+* sender_id
+* text
+
+---
+
+## Report
+
+Поля:
+
+* reporter_id
+* target_id
+* reason
+
+---
+
+## Subscription
+
+Поля:
+
+* employer_id
+* plan
+* status
+* expires_at
+
+---
+
+# Future Architecture
+
+После достижения:
+
+* 10 000 пользователей
+
+Добавляем:
+
+* Redis
+* Queue System
+* Background Jobs
+
+После достижения:
+
+* 100 000 пользователей
+
+Добавляем:
+
+* отдельный Backend API
+* CDN
+* Search Engine
+
+При этом текущая архитектура не требует полного переписывания проекта.
